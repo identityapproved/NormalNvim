@@ -35,11 +35,32 @@ return {
     "mikavilpas/yazi.nvim",
     event = "User BaseDefered",
     cmd = { "Yazi", "YaziCWD", "YaziToggle" },
+	  -- dependencies = {
+	  --  "nvim-lua/plenary.nvim",
+	  -- },
+	  keys = {
+		  {
+			  "<leader>fY",
+			  function()
+				  require("yazi").yazi()
+			  end,
+			  desc = "Open the file manager",
+		  },
+		  -- {
+		  -- 	-- Open in the current working directory
+		  -- 	"<leader>yp",
+		  -- 	function()
+		  -- 		require("yazi").yazi(nil, vim.fn.getcwd())
+		  -- 	end,
+		  -- 	desc = "Open the file manager in nvim's working directory",
+		  -- },
+	  },
     opts = {
         open_for_directories = true,
         use_ya_for_events_reading = true,
+		    yazi_floating_window_border = "none",
         use_yazi_client_id_flag = false, -- enable once yazi v0.4.0 is released
-        floating_window_scaling_factor = (is_android and 1.0) or 0.71
+        floating_window_scaling_factor = (is_android and 1.0) or 0.7
     },
   },
 
@@ -309,6 +330,7 @@ return {
       local utils = require("base.utils")
       local get_icon = utils.get_icon
       return {
+        position = "right",
         auto_clean_after_session_restore = true,
         close_if_last_window = true,
         buffers = {

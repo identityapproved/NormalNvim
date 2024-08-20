@@ -21,6 +21,7 @@
 
 --       ## ARTIFICIAL INTELLIGENCE
 --       -> neural                         [chatgpt code generator]
+--       -> codeium                        [codeium code support]
 --       -> copilot                        [github code suggestions]
 --       -> guess-indent                   [guess-indent]
 
@@ -281,27 +282,27 @@ return {
   --  [markdown previewer]
   --  https://github.com/iamcco/markdown-preview.nvim
   --  Note: If you change the build command, wipe ~/.local/data/nvim/lazy
-  {
-    "iamcco/markdown-preview.nvim",
-    build = function() vim.fn["mkdp#util#install"]() end,
-    ft = { "markdown" },
-    cmd = {
-      "MarkdownPreview",
-      "MarkdownPreviewStop",
-      "MarkdownPreviewToggle",
-    },
-  },
-
+  -- {
+  --   "iamcco/markdown-preview.nvim",
+  --   build = function() vim.fn["mkdp#util#install"]() end,
+  --   ft = { "markdown" },
+  --   cmd = {
+  --     "MarkdownPreview",
+  --     "MarkdownPreviewStop",
+  --     "MarkdownPreviewToggle",
+  --   },
+  -- },
+  --
   --  [markdown markmap]
   --  https://github.com/zeioth/markmap.nvim
   --  Important: Make sure you have yarn in your PATH before running markmap.
-  {
-    "zeioth/markmap.nvim",
-    build = "yarn global add markmap-cli",
-    cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
-    config = function(_, opts) require("markmap").setup(opts) end,
-  },
-
+  -- {
+  --   "zeioth/markmap.nvim",
+  --   build = "yarn global add markmap-cli",
+  --   cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
+  --   config = function(_, opts) require("markmap").setup(opts) end,
+  -- },
+  --
   --  ARTIFICIAL INTELLIGENCE  -------------------------------------------------
   --  neural [chatgpt code generator]
   --  https://github.com/dense-analysis/neural
@@ -309,23 +310,41 @@ return {
   --  NOTE: In order for this plugin to work, you will have to set
   --        the next env var in your OS:
   --        OPENAI_API_KEY="my_key_here"
+  -- {
+  --   "dense-analysis/neural",
+  --   cmd = { "Neural" },
+  --   config = function()
+  --     require("neural").setup {
+  --       source = {
+  --         openai = {
+  --           api_key = vim.env.OPENAI_API_KEY,
+  --         },
+  --       },
+  --       ui = {
+  --         prompt_icon = ">",
+  --       },
+  --     }
+  --   end,
+  -- },
   {
-    "dense-analysis/neural",
-    cmd = { "Neural" },
-    config = function()
-      require("neural").setup {
-        source = {
-          openai = {
-            api_key = vim.env.OPENAI_API_KEY,
-          },
-        },
-        ui = {
-          prompt_icon = ">",
-        },
-      }
-    end,
+	  "Exafunction/codeium.vim",
+	  event = "BufEnter",
+	  config = function()
+		  -- Change '<C-g>' here to any keycode you like.
+		  vim.keymap.set("i", "<C-g>", function()
+			  return vim.fn["codeium#Accept"]()
+		  end, { expr = true, silent = true })
+		  vim.keymap.set("i", "<c-;>", function()
+			  return vim.fn["codeium#CycleCompletions"](1)
+		  end, { expr = true, silent = true })
+		  vim.keymap.set("i", "<c-,>", function()
+			  return vim.fn["codeium#CycleCompletions"](-1)
+		  end, { expr = true, silent = true })
+		  vim.keymap.set("i", "<c-x>", function()
+			  return vim.fn["codeium#Clear"]()
+		  end, { expr = true, silent = true })
+	  end,
   },
-
   --  copilot [github code suggestions]
   --  https://github.com/github/copilot.vim
   --  As alternative to chatgpt, you can use copilot uncommenting this.

@@ -33,11 +33,23 @@ return {
     "folke/tokyonight.nvim",
     event = "User LoadColorSchemes",
     opts = {
+      -- Background styles. Can be "dark", "transparent" or "normal"
+      sidebars = "transparent", -- style for sidebars, see below
+      floats = "transparent", -- style for floating windows
       dim_inactive = false,
+      lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
       styles = {
         comments = { italic = true },
         keywords = { italic = true },
+        sidebars = "transparent", -- style for sidebars, see below
+        floats = "transparent", -- style for floating windows
       },
+      --- You can override specific color groups to use other groups or a hex color
+      --- function will be called with a ColorScheme table
+      ---@param colors ColorScheme
+      on_colors = function(colors)
+      colors.bg_statusline = "NONE"
+      end,
     }
   },
 

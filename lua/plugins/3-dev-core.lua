@@ -188,34 +188,34 @@ return {
   -- nvim-java [java support]
   -- https://github.com/nvim-java/nvim-java
   -- Reliable jdtls support. Must go before mason-lspconfig and lsp-config.
-  {
-    "nvim-java/nvim-java",
-    ft = { "java" },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "neovim/nvim-lspconfig",
-      "mfussenegger/nvim-dap",
-      "williamboman/mason.nvim",
-    },
-    opts = {
-      notifications = {
-        dap = false,
-      },
-      -- NOTE: One of these files must be in your project root directory.
-      --       Otherwise the debugger will end in the wrong directory and fail.
-      root_markers = {
-        'settings.gradle',
-        'settings.gradle.kts',
-        'pom.xml',
-        'build.gradle',
-        'mvnw',
-        'gradlew',
-        'build.gradle',
-        'build.gradle.kts',
-        '.git',
-      },
-    },
-  },
+  -- {
+  --   "nvim-java/nvim-java",
+  --   ft = { "java" },
+  --   dependencies = {
+  --     "MunifTanjim/nui.nvim",
+  --     "neovim/nvim-lspconfig",
+  --     "mfussenegger/nvim-dap",
+  --     "williamboman/mason.nvim",
+  --   },
+  --   opts = {
+  --     notifications = {
+  --       dap = false,
+  --     },
+  --     -- NOTE: One of these files must be in your project root directory.
+  --     --       Otherwise the debugger will end in the wrong directory and fail.
+  --     root_markers = {
+  --       'settings.gradle',
+  --       'settings.gradle.kts',
+  --       'pom.xml',
+  --       'build.gradle',
+  --       'mvnw',
+  --       'gradlew',
+  --       'build.gradle',
+  --       'build.gradle.kts',
+  --       '.git',
+  --     },
+  --   },
+  -- },
 
   --  nvim-lspconfig [lsp configs]
   --  https://github.com/neovim/nvim-lspconfig
@@ -223,7 +223,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = "User BaseFile",
-    dependencies = "nvim-java/nvim-java",
+    -- dependencies = "nvim-java/nvim-java",
   },
 
   -- mason-lspconfig [auto start lsp]
@@ -262,7 +262,7 @@ return {
     },
     opts = {
       registries = {
-        "github:nvim-java/mason-registry",
+        -- "github:nvim-java/mason-registry",
         "github:mason-org/mason-registry",
       },
       ui = {
@@ -419,7 +419,7 @@ return {
         { path = "ts-comments.nvim", mods = { "ts-comments" } },
         { path = "markdown.nvim", mods = { "render-markdown" } },
         { path = "nvim-highlight-colors", mods = { "nvim-highlight-colors" } },
-        { path = "nvim-java", mods = { "java" } },
+        -- { path = "nvim-java", mods = { "java" } },
         { path = "nvim-lspconfig", mods = { "lspconfig" } },
         { path = "mason-lspconfig.nvim", mods = { "mason-lspconfig" } },
         { path = "mason.nvim", mods = { "mason", "mason-core", "mason-registry", "mason-vendor" } },
@@ -461,7 +461,7 @@ return {
         { path = "neotest-dotnet", mods = { "neotest-dotnet" } },
         { path = "neotest-elixir", mods = { "neotest-elixir" } },
         { path = "neotest-golang", mods = { "neotest-golang" } },
-        { path = "neotest-java", mods = { "neotest-java" } },
+        -- { path = "neotest-java", mods = { "neotest-java" } },
         { path = "neotest-jest", mods = { "neotest-jest" } },
         { path = "neotest-phpunit", mods = { "neotest-phpunit" } },
         { path = "neotest-python", mods = { "neotest-python" } },
