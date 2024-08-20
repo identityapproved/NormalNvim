@@ -35,7 +35,8 @@ return {
   {
     "mikavilpas/yazi.nvim",
     event = "User BaseDefered",
-    cmd = { "Yazi", "Yazi cwd", "Yazi toggle" },
+<<<<<<< HEAD
+    cmd = { "Yazi", "YaziCWD", "YaziToggle" },
 	  -- dependencies = {
 	  --  "nvim-lua/plenary.nvim",
 	  -- },
@@ -59,9 +60,15 @@ return {
     opts = {
         open_for_directories = true,
         use_ya_for_events_reading = true,
-	yazi_floating_window_border = "none",
+		    yazi_floating_window_border = "none",
         use_yazi_client_id_flag = false, -- enable once yazi v0.4.0 is released
         floating_window_scaling_factor = (is_android and 1.0) or 0.7
+=======
+    cmd = { "Yazi", "Yazi cwd", "Yazi toggle" },
+    opts = {
+        open_for_directories = true,
+        floating_window_scaling_factor = (is_android and 1.0) or 0.71
+>>>>>>> main
     },
   },
 
