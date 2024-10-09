@@ -54,17 +54,17 @@ return {
       "TSUpdateSync",
     },
     build = ":TSUpdate",
-    init = function(plugin)
-      -- perf: make treesitter queries available at startup.
-      require("lazy.core.loader").add_to_rtp(plugin)
-      require("nvim-treesitter.query_predicates")
-    end,
     opts = {
       auto_install = false, -- Currently bugged. Use [:TSInstall all] and [:TSUpdate all]
-      highlight = { enable = true },
+
+      highlight = {
+        enable = true,
+        disable = function(_, bufnr) return utils.is_big_file(bufnr) end,
+      },
       matchup = {
         enable = true,
         enable_quotes = true,
+        disable = function(_, bufnr) return utils.is_big_file(bufnr) end,
       },
       incremental_selection = { enable = true },
       indent = { enable = true },
@@ -152,7 +152,7 @@ return {
     opts = {
       heading = {
         sign = false,
-        icons = { ' ', ' ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        icons = require("base.utils").get_icon("RenderMarkdown"),
         width = "block",
       },
       code = {
@@ -262,9 +262,9 @@ return {
       },
       ui = {
         icons = {
-          package_installed = "✓",
-          package_uninstalled = "✗",
-          package_pending = "⟳",
+          package_installed = require("base.utils").get_icon("MasonInstalled"),
+          package_uninstalled = require("base.utils").get_icon("MasonUninstalled"),
+          package_pending = require("base.utils").get_icon("MasonPending"),
         },
       },
     }
@@ -272,6 +272,7 @@ return {
 
   --  Schema Store [mason extra schemas]
   --  https://github.com/b0o/SchemaStore.nvim
+  --  We use this plugin in ../base/utils/lsp.lua
   "b0o/SchemaStore.nvim",
 
   -- none-ls-autoload.nvim [mason package loader]
@@ -343,7 +344,7 @@ return {
     opts = {
       aggressive_mode = false,
       excluded_lsp_clients = {
-        "null-ls", "jdtls", "marksman"
+        "null-ls", "jdtls", "marksman", "lua_ls"
       },
       grace_period = (60 * 15),
       wakeup_delay = 3000,
@@ -388,6 +389,7 @@ return {
         { path = "nvim-autopairs", mods = { "nvim-autopairs" } },
         { path = "lsp_signature", mods = { "lsp_signature" } },
         { path = "nvim-lightbulb", mods = { "nvim-lightbulb" } },
+        { path = "hot-reload.nvim", mods = { "hot-reload" } },
         { path = "distroupdate.nvim", mods = { "distroupdate" } },
 
         { path = "tokyonight.nvim", mods = { "tokyonight" } },
@@ -488,19 +490,23 @@ return {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-nvim-lsp",
+      "onsails/lspkind.nvim"
     },
     event = "InsertEnter",
     opts = function()
       -- ensure dependencies exist
       local cmp = require("cmp")
       local luasnip = require("luasnip")
-      local lspkind = require("lspkind")
+      local lspkind_loaded, lspkind = pcall(require, "lspkind")
 
       -- border opts
       local border_opts = {
         border = "rounded",
         winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
       }
+      local cmp_config_window = (
+        vim.g.lsp_round_borders_enabled and cmp.config.window.bordered(border_opts)
+      ) or cmp.config.window
 
       -- helper
       local function has_words_before()
@@ -523,7 +529,7 @@ return {
         preselect = cmp.PreselectMode.None,
         formatting = {
           fields = { "kind", "abbr", "menu" },
-          format = lspkind.cmp_format(utils.get_plugin_opts("lspkind.nvim")),
+          format = (lspkind_loaded and lspkind.cmp_format(utils.get_plugin_opts("lspkind.nvim"))) or nil
         },
         snippet = {
           expand = function(args) luasnip.lsp_expand(args.body) end,
@@ -541,8 +547,8 @@ return {
           select = false,
         },
         window = {
-          completion = cmp.config.window.bordered(border_opts),
-          documentation = cmp.config.window.bordered(border_opts),
+          completion = cmp_config_window,
+          documentation = cmp_config_window,
         },
         mapping = {
           ["<PageUp>"] = cmp.mapping.select_prev_item {

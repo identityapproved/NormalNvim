@@ -23,6 +23,7 @@
 --       -> nvim-ts-autotag        [auto close html tags]
 --       -> lsp_signature.nvim     [auto params help]
 --       -> nvim-lightbulb         [lightbulb for code actions]
+--       -> hot-reload.nvim        [config reload]
 --       -> distroupdate.nvim      [distro update]
 
 local is_android = vim.fn.isdirectory('/data') == 1 -- true if on android
@@ -344,19 +345,19 @@ return {
           sources = {
             {
               source = "filesystem",
-              display_name = get_icon("FolderClosed", 1, true) .. "File",
+              display_name = get_icon("FolderClosed", true) .. " File",
             },
             {
               source = "buffers",
-              display_name = get_icon("DefaultFile", 1, true) .. "Bufs",
+              display_name = get_icon("DefaultFile", true) .. " Bufs",
             },
             {
               source = "git_status",
-              display_name = get_icon("Git", 1, true) .. "Git",
+              display_name = get_icon("Git", true) .. " Git",
             },
             {
               source = "diagnostics",
-              display_name = get_icon("Diagnostic", 1, true) .. "Diagnostic",
+              display_name = get_icon("Diagnostic", true) .. " Diagnostic",
             },
           },
         },
@@ -367,7 +368,7 @@ return {
             folder_open = get_icon("FolderOpen"),
             folder_empty = get_icon("FolderEmpty"),
             folder_empty_open = get_icon("FolderEmpty"),
-            default = get_icon "DefaultFile",
+            default = get_icon("DefaultFile"),
           },
           modified = { symbol = get_icon "FileModified" },
           git_status = {
@@ -478,7 +479,7 @@ return {
             ["<S-CR>"] = "system_open",
             ["[b"] = "prev_source",
             ["]b"] = "next_source",
-            F = utils.is_available "telescope.nvim" and "find_in_dir" or nil,
+            F = utils.is_available("telescope.nvim") and "find_in_dir" or nil,
             O = "system_open",
             Y = "copy_selector",
             h = "parent_or_close",
@@ -691,7 +692,7 @@ return {
       sign = { enabled = false },
       virtual_text = {
         enabled = true,
-        text = "💡"
+        text = require("base.utils").get_icon("Lightbulb")
       }
     },
     config = function(_, opts) require("nvim-lightbulb").setup(opts) end
@@ -700,8 +701,31 @@ return {
   -- distroupdate.nvim [distro update]
   -- https://github.com/zeioth/distroupdate.nvim
   {
-    "zeioth/distroupdate.nvim",
+    "zeioth/hot-reload.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
+    event = "User BaseFile",
+    opts = function()
+      local utils = require("base.utils")
+      local config_dir = utils.os_path(vim.fn.stdpath "config" .. "/lua/base/")
+      return {
+        notify = true,
+        reload_files = {
+          config_dir .. "1-options.lua",
+          config_dir .. "4-mappings.lua"
+        },
+        reload_callback = function()
+          vim.cmd(":silent! colorscheme " .. vim.g.default_colorscheme) -- nvim     colorscheme reload command
+          vim.cmd(":silent! doautocmd ColorScheme")                     -- heirline colorscheme reload event
+        end
+      }
+    end
+  },
+
+  -- distroupdate.nvim [distro update]
+  -- https://github.com/zeioth/distroupdate.nvim
+  {
+    "zeioth/distroupdate.nvim",
+    event = "User BaseFile",
     cmd = {
       "DistroFreezePluginVersions",
       "DistroReadChangelog",
@@ -709,21 +733,10 @@ return {
       "DistroUpdate",
       "DistroUpdateRevert"
     },
-    opts = function()
-      local utils = require("base.utils")
-      local config_dir = utils.os_path(vim.fn.stdpath "config" .. "/lua/base/")
-      return {
-        channel = "stable", -- stable/nightly
-        hot_reload_files = {
-          config_dir .. "1-options.lua",
-          config_dir .. "4-mappings.lua"
-        },
-        hot_reload_callback = function()
-          vim.cmd(":silent! colorscheme " .. base.default_colorscheme) -- nvim     colorscheme reload command
-          vim.cmd(":silent! doautocmd ColorScheme")                    -- heirline colorscheme reload event
-        end
-      }
-    end
+    opts = {
+        channel = "stable" -- stable/nightly
+    }
   },
+
 
 } -- end of return

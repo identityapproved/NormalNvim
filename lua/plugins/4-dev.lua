@@ -40,7 +40,7 @@
 --       -> guttentags_plus                [auto generate C/C++ tags]
 --       -> venv-selector                  [python virtualenv selector]
 
-local is_windows = vim.fn.has('win32') == 1 -- true if on windows
+local is_windows = vim.fn.has("win32") == 1 -- true if on windows
 
 return {
   --  SNIPPETS ----------------------------------------------------------------
@@ -89,7 +89,7 @@ return {
   --  https://github.com/lewis6991/gitsigns.nvim
   {
     "lewis6991/gitsigns.nvim",
-    enabled = vim.fn.executable "git" == 1,
+    enabled = vim.fn.executable("git") == 1,
     event = "User BaseGitFile",
     opts = function()
       local get_icon = require("base.utils").get_icon
@@ -104,7 +104,7 @@ return {
           untracked = { text = get_icon("GitSign") },
         },
       }
-    end
+    end,
   },
 
   --  Git fugitive mergetool + [git commands]
@@ -122,7 +122,7 @@ return {
   --  	keepBackup = false
   {
     "tpope/vim-fugitive",
-    enabled = vim.fn.executable "git" == 1,
+    enabled = vim.fn.executable("git") == 1,
     dependencies = { "tpope/vim-rhubarb" },
     cmd = {
       "Gvdiffsplit",
@@ -141,7 +141,7 @@ return {
       "Gstatus",
     },
     config = function()
-      -- NOTE: On vimplugins we use config instead of opts.
+      -- NOTE: On vim plugins we use config instead of opts.
       vim.g.fugitive_no_maps = 1
     end,
   },
@@ -197,18 +197,23 @@ return {
     config = function(_, opts)
       require("aerial").setup(opts)
       -- HACK: The first time you open aerial on a session, close all folds.
-      vim.api.nvim_create_autocmd({"FileType", "BufEnter"}, {
+      vim.api.nvim_create_autocmd({ "FileType", "BufEnter" }, {
         desc = "Aerial: When aerial is opened, close all its folds.",
         callback = function()
           local is_aerial = vim.bo.filetype == "aerial"
-          local is_ufo_available = require("base.utils").is_available("nvim-ufo")
-          if is_ufo_available and is_aerial and vim.b.new_aerial_session == nil then
+          local is_ufo_available =
+              require("base.utils").is_available("nvim-ufo")
+          if
+              is_ufo_available
+              and is_aerial
+              and vim.b.new_aerial_session == nil
+          then
             vim.b.new_aerial_session = false
             require("aerial").tree_set_collapse_level(0, 0)
           end
         end,
       })
-    end
+    end,
   },
 
   -- Litee calltree [calltree]
@@ -216,22 +221,20 @@ return {
   -- https://github.com/ldelossa/litee-calltree.nvim
   -- press ? inside the panel to show help.
   {
-    'ldelossa/litee.nvim',
+    "ldelossa/litee.nvim",
     event = "User BaseFile",
     opts = {
       notify = { enabled = false },
       panel = {
-          orientation = "bottom",
-          panel_size = 10,
+        orientation = "bottom",
+        panel_size = 10,
       },
     },
-    config = function(_, opts)
-      require('litee.lib').setup(opts)
-    end
+    config = function(_, opts) require("litee.lib").setup(opts) end,
   },
   {
-    'ldelossa/litee-calltree.nvim',
-    dependencies = 'ldelossa/litee.nvim',
+    "ldelossa/litee-calltree.nvim",
+    dependencies = "ldelossa/litee.nvim",
     event = "User BaseFile",
     opts = {
       on_open = "panel", -- or popout
@@ -240,11 +243,11 @@ return {
         expand = "<CR>",
         collapse = "c",
         collapse_all = "C",
-        jump = "<C-CR>"
+        jump = "<C-CR>",
       },
     },
     config = function(_, opts)
-      require('litee.calltree').setup(opts)
+      require("litee.calltree").setup(opts)
 
       -- Highlight only while on calltree
       vim.api.nvim_create_autocmd({ "WinEnter" }, {
@@ -255,16 +258,20 @@ return {
               vim.wo.colorcolumn = "0"
               vim.wo.foldcolumn = "0"
               vim.cmd("silent! PinBuffer") -- stickybuf.nvim
-              vim.cmd("silent! hi LTSymbolJump ctermfg=015 ctermbg=110 cterm=italic,bold,underline guifg=#464646 guibg=#87afd7 gui=italic,bold")
-              vim.cmd("silent! hi LTSymbolJumpRefs ctermfg=015 ctermbg=110 cterm=italic,bold,underline guifg=#464646 guibg=#87afd7 gui=italic,bold")
+              vim.cmd(
+                "silent! hi LTSymbolJump ctermfg=015 ctermbg=110 cterm=italic,bold,underline guifg=#464646 guibg=#87afd7 gui=italic,bold"
+              )
+              vim.cmd(
+                "silent! hi LTSymbolJumpRefs ctermfg=015 ctermbg=110 cterm=italic,bold,underline guifg=#464646 guibg=#87afd7 gui=italic,bold"
+              )
             else
               vim.cmd("silent! highlight clear LTSymbolJump")
               vim.cmd("silent! highlight clear LTSymbolJumpRefs")
             end
           end, 100)
-        end
+        end,
       })
-    end
+    end,
   },
 
   --  CODE DOCUMENTATION ------------------------------------------------------
@@ -275,7 +282,7 @@ return {
     cmd = {
       "DookuGenerate",
       "DookuOpen",
-      "DookuAutoSetup"
+      "DookuAutoSetup",
     },
     opts = {},
   },
@@ -283,27 +290,27 @@ return {
   --  [markdown previewer]
   --  https://github.com/iamcco/markdown-preview.nvim
   --  Note: If you change the build command, wipe ~/.local/data/nvim/lazy
-  -- {
-  --   "iamcco/markdown-preview.nvim",
-  --   build = function() vim.fn["mkdp#util#install"]() end,
-  --   ft = { "markdown" },
-  --   cmd = {
-  --     "MarkdownPreview",
-  --     "MarkdownPreviewStop",
-  --     "MarkdownPreviewToggle",
-  --   },
-  -- },
-  --
+  {
+    "iamcco/markdown-preview.nvim",
+    build = function() vim.fn["mkdp#util#install"]() end,
+    ft = { "markdown" },
+    cmd = {
+      "MarkdownPreview",
+      "MarkdownPreviewStop",
+      "MarkdownPreviewToggle",
+    },
+  },
+
   --  [markdown markmap]
   --  https://github.com/zeioth/markmap.nvim
   --  Important: Make sure you have yarn in your PATH before running markmap.
-  -- {
-  --   "zeioth/markmap.nvim",
-  --   build = "yarn global add markmap-cli",
-  --   cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
-  --   config = function(_, opts) require("markmap").setup(opts) end,
-  -- },
-  --
+  {
+    "zeioth/markmap.nvim",
+    build = "yarn global add markmap-cli",
+    cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
+    config = function(_, opts) require("markmap").setup(opts) end,
+  },
+
   --  ARTIFICIAL INTELLIGENCE  -------------------------------------------------
   --  neural [chatgpt code generator]
   --  https://github.com/dense-analysis/neural
@@ -328,23 +335,35 @@ return {
   --   end,
   -- },
   {
-	  "Exafunction/codeium.vim",
-	  event = "BufEnter",
-	  config = function()
-		  -- Change '<C-g>' here to any keycode you like.
-		  vim.keymap.set("i", "<C-g>", function()
-			  return vim.fn["codeium#Accept"]()
-		  end, { expr = true, silent = true })
-		  vim.keymap.set("i", "<c-;>", function()
-			  return vim.fn["codeium#CycleCompletions"](1)
-		  end, { expr = true, silent = true })
-		  vim.keymap.set("i", "<c-,>", function()
-			  return vim.fn["codeium#CycleCompletions"](-1)
-		  end, { expr = true, silent = true })
-		  vim.keymap.set("i", "<c-x>", function()
-			  return vim.fn["codeium#Clear"]()
-		  end, { expr = true, silent = true })
-	  end,
+    "Exafunction/codeium.vim",
+    event = "BufEnter",
+    config = function()
+      -- Change '<C-g>' here to any keycode you like.
+      vim.keymap.set(
+        "i",
+        "<C-g>",
+        function() return vim.fn["codeium#Accept"]() end,
+        { expr = true, silent = true }
+      )
+      vim.keymap.set(
+        "i",
+        "<c-;>",
+        function() return vim.fn["codeium#CycleCompletions"](1) end,
+        { expr = true, silent = true }
+      )
+      vim.keymap.set(
+        "i",
+        "<c-,>",
+        function() return vim.fn["codeium#CycleCompletions"](-1) end,
+        { expr = true, silent = true }
+      )
+      vim.keymap.set(
+        "i",
+        "<c-x>",
+        function() return vim.fn["codeium#Clear"]() end,
+        { expr = true, silent = true }
+      )
+    end,
   },
   --  copilot [github code suggestions]
   --  https://github.com/github/copilot.vim
@@ -369,7 +388,7 @@ return {
   {
     "NMAC427/guess-indent.nvim",
     event = "User BaseFile",
-    opts = {}
+    opts = {},
   },
 
   --  COMPILER ----------------------------------------------------------------
@@ -381,7 +400,7 @@ return {
       "CompilerOpen",
       "CompilerToggleResults",
       "CompilerRedo",
-      "CompilerStop"
+      "CompilerStop",
     },
     dependencies = { "stevearc/overseer.nvim" },
     opts = {},
@@ -406,10 +425,10 @@ return {
       "OverseerBuild",
       "OverseerQuickAction",
       "OverseerTaskAction",
-      "OverseerClearCache"
+      "OverseerClearCache",
     },
     opts = {
-     task_list = { -- the window that shows the results.
+      task_list = { -- the window that shows the results.
         direction = "bottom",
         min_height = 25,
         max_height = 25,
@@ -437,16 +456,16 @@ return {
   --  We currently ship most of them with nvim.
   {
     "mfussenegger/nvim-dap",
-    enabled = vim.fn.has "win32" == 0,
+    enabled = vim.fn.has("win32") == 0,
     event = "User BaseFile",
     config = function()
       local dap = require("dap")
 
       -- C#
       dap.adapters.coreclr = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/bin/netcoredbg',
-        args = { '--interpreter=vscode' }
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/netcoredbg",
+        args = { "--interpreter=vscode" },
       }
       dap.configurations.cs = {
         {
@@ -454,7 +473,11 @@ return {
           name = "launch - netcoredbg",
           request = "launch",
           program = function() -- Ask the user what executable wants to debug
-            return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Program.exe', 'file')
+            return vim.fn.input(
+              "Path to dll: ",
+              vim.fn.getcwd() .. "/bin/Program.exe",
+              "file"
+            )
           end,
         },
       }
@@ -471,9 +494,10 @@ return {
 
       -- Python
       dap.adapters.python = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/packages/debugpy/venv/bin/python',
-        args = { '-m', 'debugpy.adapter' },
+        type = "executable",
+        command = vim.fn.stdpath("data")
+            .. "/mason/packages/debugpy/venv/bin/python",
+        args = { "-m", "debugpy.adapter" },
       }
       dap.configurations.python = {
         {
@@ -486,36 +510,50 @@ return {
 
       -- Lua
       dap.adapters.nlua = function(callback, config)
-        callback({ type = 'server', host = config.host or "127.0.0.1", port = config.port or 8086 })
+        callback({
+          type = "server",
+          host = config.host or "127.0.0.1",
+          port = config.port or 8086,
+        })
       end
       dap.configurations.lua = {
         {
-          type = 'nlua',
-          request = 'attach',
+          type = "nlua",
+          request = "attach",
           name = "Attach to running Neovim instance",
-          program = function() pcall(require "osv".launch({ port = 8086 })) end,
-        }
+          program = function() pcall(require("osv").launch({ port = 8086 })) end,
+        },
       }
 
       -- C
       dap.adapters.codelldb = {
-        type = 'server',
+        type = "server",
         port = "${port}",
         executable = {
-          command = vim.fn.stdpath('data') .. '/mason/bin/codelldb',
+          command = vim.fn.stdpath("data") .. "/mason/bin/codelldb",
           args = { "--port", "${port}" },
-          detached = function() if is_windows then return false else return true end end,
-        }
+          detached = function()
+            if is_windows then
+              return false
+            else
+              return true
+            end
+          end,
+        },
       }
       dap.configurations.c = {
         {
-          name = 'Launch',
-          type = 'codelldb',
-          request = 'launch',
+          name = "Launch",
+          type = "codelldb",
+          request = "launch",
           program = function() -- Ask the user what executable wants to debug
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/bin/program', 'file')
+            return vim.fn.input(
+              "Path to executable: ",
+              vim.fn.getcwd() .. "/bin/program",
+              "file"
+            )
           end,
-          cwd = '${workspaceFolder}',
+          cwd = "${workspaceFolder}",
           stopOnEntry = false,
           args = {},
         },
@@ -527,24 +565,32 @@ return {
       -- Rust
       dap.configurations.rust = {
         {
-          name = 'Launch',
-          type = 'codelldb',
-          request = 'launch',
+          name = "Launch",
+          type = "codelldb",
+          request = "launch",
           program = function() -- Ask the user what executable wants to debug
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/bin/program', 'file')
+            return vim.fn.input(
+              "Path to executable: ",
+              vim.fn.getcwd() .. "/bin/program",
+              "file"
+            )
           end,
-          cwd = '${workspaceFolder}',
+          cwd = "${workspaceFolder}",
           stopOnEntry = false,
           args = {},
           initCommands = function() -- add rust types support (optional)
             -- Find out where to look for the pretty printer Python module
-            local rustc_sysroot = vim.fn.trim(vim.fn.system('rustc --print sysroot'))
+            local rustc_sysroot =
+                vim.fn.trim(vim.fn.system("rustc --print sysroot"))
 
-            local script_import = 'command script import "' .. rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py"'
-            local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'
+            local script_import = 'command script import "'
+                .. rustc_sysroot
+                .. '/lib/rustlib/etc/lldb_lookup.py"'
+            local commands_file = rustc_sysroot
+                .. "/lib/rustlib/etc/lldb_commands"
 
             local commands = {}
-            local file = io.open(commands_file, 'r')
+            local file = io.open(commands_file, "r")
             if file then
               for line in file:lines() do
                 table.insert(commands, line)
@@ -555,7 +601,7 @@ return {
 
             return commands
           end,
-        }
+        },
       }
 
       -- Go
@@ -563,12 +609,12 @@ return {
       -- * You have initialized your module with 'go mod init module_name'.
       -- * You :cd your project before running DAP.
       dap.adapters.delve = {
-        type = 'server',
-        port = '${port}',
+        type = "server",
+        port = "${port}",
         executable = {
-          command = vim.fn.stdpath('data') .. '/mason/packages/delve/dlv',
-          args = { 'dap', '-l', '127.0.0.1:${port}' },
-        }
+          command = vim.fn.stdpath("data") .. "/mason/packages/delve/dlv",
+          args = { "dap", "-l", "127.0.0.1:${port}" },
+        },
       }
       dap.configurations.go = {
         {
@@ -582,20 +628,20 @@ return {
           name = "Compile module and debug this file (test)",
           request = "launch",
           mode = "test",
-          program = "./${relativeFileDirname}"
+          program = "./${relativeFileDirname}",
         },
       }
 
       -- Dart / Flutter
       dap.adapters.dart = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/bin/dart-debug-adapter',
-        args = { 'dart' }
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/dart-debug-adapter",
+        args = { "dart" },
       }
       dap.adapters.flutter = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/bin/dart-debug-adapter',
-        args = { 'flutter' }
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/dart-debug-adapter",
+        args = { "flutter" },
       }
       dap.configurations.dart = {
         {
@@ -615,41 +661,41 @@ return {
           flutterSdkPath = "/opt/flutter",                  -- ensure this is correct
           program = "${workspaceFolder}/lib/main.dart",     -- ensure this is correct
           cwd = "${workspaceFolder}",
-        }
+        },
       }
 
       -- Kotlin
       -- Kotlin projects have very weak project structure conventions.
       -- You must manually specify what the project root and main class are.
       dap.adapters.kotlin = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/bin/kotlin-debug-adapter',
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/kotlin-debug-adapter",
       }
       dap.configurations.kotlin = {
         {
-          type = 'kotlin',
-          request = 'launch',
-          name = 'Launch kotlin program',
-          projectRoot = "${workspaceFolder}/app",     -- ensure this is correct
-          mainClass = "AppKt",                        -- ensure this is correct
+          type = "kotlin",
+          request = "launch",
+          name = "Launch kotlin program",
+          projectRoot = "${workspaceFolder}/app", -- ensure this is correct
+          mainClass = "AppKt",                    -- ensure this is correct
         },
       }
 
       -- Javascript / Typescript (firefox)
       dap.adapters.firefox = {
-        type = 'executable',
-        command = vim.fn.stdpath('data') .. '/mason/bin/firefox-debug-adapter',
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/firefox-debug-adapter",
       }
       dap.configurations.typescript = {
         {
-          name = 'Debug with Firefox',
-          type = 'firefox',
-          request = 'launch',
+          name = "Debug with Firefox",
+          type = "firefox",
+          request = "launch",
           reAttach = true,
-          url = 'http://localhost:4200', -- Write the actual URL of your project.
-          webRoot = '${workspaceFolder}',
-          firefoxExecutable = '/usr/bin/firefox'
-        }
+          url = "http://localhost:4200", -- Write the actual URL of your project.
+          webRoot = "${workspaceFolder}",
+          firefoxExecutable = "/usr/bin/firefox",
+        },
       }
       dap.configurations.javascript = dap.configurations.typescript
       dap.configurations.javascriptreact = dap.configurations.typescript
@@ -684,36 +730,39 @@ return {
 
       -- PHP
       dap.adapters.php = {
-        type = 'executable',
-        command = vim.fn.stdpath("data") .. '/mason/bin/php-debug-adapter',
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/php-debug-adapter",
       }
       dap.configurations.php = {
         {
-          type = 'php',
-          request = 'launch',
-          name = 'Listen for Xdebug',
-          port = 9000
-        }
+          type = "php",
+          request = "launch",
+          name = "Listen for Xdebug",
+          port = 9000,
+        },
       }
 
       -- Shell
       dap.adapters.bashdb = {
-        type = 'executable',
-        command = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/bash-debug-adapter',
-        name = 'bashdb',
+        type = "executable",
+        command = vim.fn.stdpath("data")
+            .. "/mason/packages/bash-debug-adapter/bash-debug-adapter",
+        name = "bashdb",
       }
       dap.configurations.sh = {
         {
-          type = 'bashdb',
-          request = 'launch',
+          type = "bashdb",
+          request = "launch",
           name = "Launch file",
           showDebugOutput = true,
-          pathBashdb = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb',
-          pathBashdbLib = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir',
+          pathBashdb = vim.fn.stdpath("data")
+              .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
+          pathBashdbLib = vim.fn.stdpath("data")
+              .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
           trace = true,
           file = "${file}",
           program = "${file}",
-          cwd = '${workspaceFolder}',
+          cwd = "${workspaceFolder}",
           pathCat = "cat",
           pathBash = "/bin/bash",
           pathMkfifo = "mkfifo",
@@ -721,28 +770,28 @@ return {
           args = {},
           env = {},
           terminalKind = "integrated",
-        }
+        },
       }
 
       -- Elixir
       dap.adapters.mix_task = {
-        type = 'executable',
-        command = vim.fn.stdpath("data") .. '/mason/bin/elixir-ls-debugger',
-        args = {}
+        type = "executable",
+        command = vim.fn.stdpath("data") .. "/mason/bin/elixir-ls-debugger",
+        args = {},
       }
       dap.configurations.elixir = {
         {
           type = "mix_task",
           name = "mix test",
-          task = 'test',
+          task = "test",
           taskArgs = { "--trace" },
           request = "launch",
           startApps = true, -- for Phoenix projects
           projectDir = "${workspaceFolder}",
           requireFiles = {
             "test/**/test_helper.exs",
-            "test/**/*_test.exs"
-          }
+            "test/**/*_test.exs",
+          },
         },
       }
     end, -- of dap config
@@ -764,12 +813,10 @@ return {
     opts = { floating = { border = "rounded" } },
     config = function(_, opts)
       local dap, dapui = require("dap"), require("dapui")
-      dap.listeners.after.event_initialized["dapui_config"] = function(
-      )
+      dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
       end
-      dap.listeners.before.event_terminated["dapui_config"] = function(
-      )
+      dap.listeners.before.event_terminated["dapui_config"] = function()
         dapui.close()
       end
       dap.listeners.before.event_exited["dapui_config"] = function()
@@ -850,11 +897,15 @@ return {
     end,
     config = function(_, opts)
       -- get neotest namespace (api call creates or returns namespace)
-      local neotest_ns = vim.api.nvim_create_namespace "neotest"
+      local neotest_ns = vim.api.nvim_create_namespace("neotest")
       vim.diagnostic.config({
         virtual_text = {
           format = function(diagnostic)
-            local message = diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
+            local message = diagnostic.message
+                :gsub("\n", " ")
+                :gsub("\t", " ")
+                :gsub("%s+", " ")
+                :gsub("^%s+", "")
             return message
           end,
         },
@@ -906,35 +957,41 @@ return {
       -- NOTE: On vimplugins we use config instead of opts.
       vim.g.gutentags_plus_nomap = 1
       vim.g.gutentags_resolve_symlinks = 1
-      vim.g.gutentags_cache_dir = vim.fn.stdpath "cache" .. "/tags"
+      vim.g.gutentags_cache_dir = vim.fn.stdpath("cache") .. "/tags"
       vim.api.nvim_create_autocmd("FileType", {
         desc = "Auto generate C/C++ tags",
         callback = function()
           local is_c = vim.bo.filetype == "c" or vim.bo.filetype == "cpp"
-          if is_c then vim.g.gutentags_enabled = 1
-          else vim.g.gutentags_enabled = 0 end
+          if is_c then
+            vim.g.gutentags_enabled = 1
+          else
+            vim.g.gutentags_enabled = 0
+          end
         end,
       })
     end,
   },
 
   {
-  'linux-cultist/venv-selector.nvim',
-  dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
-  config = function()
-    require('venv-selector').setup {
-      -- Your options go here
-      name = "venv",
-      -- auto_refresh = false
-    }
-  end,
-  event = 'VeryLazy', -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
-  keys = {
-    -- Keymap to open VenvSelector to pick a venv.
-    { '<leader>vs', '<cmd>VenvSelect<cr>' },
-    -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
-    { '<leader>vc', '<cmd>VenvSelectCached<cr>' },
+    "linux-cultist/venv-selector.nvim",
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      "nvim-telescope/telescope.nvim",
+      "mfussenegger/nvim-dap-python",
+    },
+    config = function()
+      require("venv-selector").setup({
+        -- Your options go here
+        name = "venv",
+        -- auto_refresh = false
+      })
+    end,
+    event = "VeryLazy", -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
+    keys = {
+      -- Keymap to open VenvSelector to pick a venv.
+      { "<leader>vs", "<cmd>VenvSelect<cr>" },
+      -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
+      { "<leader>vc", "<cmd>VenvSelectCached<cr>" },
+    },
   },
-},
-
 } -- end of return

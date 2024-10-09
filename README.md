@@ -22,7 +22,7 @@
 ## Screenshots
 
 Tokyo Night (Night) theme by default
-![screenshot_2024-03-17_17-12-10_712765529](https://github.com/NormalNvim/NormalNvim/assets/3357792/096b260b-6678-405c-88b4-376a358e47d5)
+![screenshot_2024-10-04_23-22-02_932273168](https://github.com/user-attachments/assets/9191cf69-6fe2-4cde-ad43-d63d1469a681)
 
 The space key shows [all you can do](https://github.com/NormalNvim/NormalNvim/wiki/basic-mappings)
 ![screenshot_2024-03-12_22-48-45_446272370](https://github.com/NormalNvim/NormalNvim/assets/3357792/1fb4a576-e04f-481b-9692-67cdcc071d13)
@@ -123,12 +123,27 @@ Special thanks to LeoRed04 for designing the logo.
 ## Trivia
 Did you know NormalNvim was the first Neovim distro to ship a compiler that [support 22+ programming languages out of the box](https://www.youtube.com/watch?v=O42uCIBaCIQ)?
 
-## Todos before v4.0
-* Better QA for `distroupdate.nvim`.
-* Docusaurus proof of concept.
-* Prepare promos.
-
 ## Roadmap
-* We are currently in a stable state.
+
+### Todos before v4.0 (2024)
+* ~~Docusaurus proof of concept.~~ → ~~Screenshoots of all plugins will be added in the next 48h!~~
+* ~~Before upgrading to lspconfig 0.2, migrate from `tsserver` to `ts_ls` (as the former has been renamed in lspconfig). → [see mason-registry issue](https://github.com/mason-org/mason-registry/issues/7132)~~
+* ~~Better QA for `distroupdate.nvim`~~
+* ~~Keep an eye on the ruff 0.6.3 issue (and remember to credit Dimscord). → https://github.com/astral-sh/ruff/issues/13238~~
+* ~~separate the hot reload system from distroupdate.nvim and make it a new plugin.~~
+* ~~mason-extra-cmds: refactor the plugin so it's more maintainable. → Last plugin to refactor!~~
+* ~~curate icon system~~
+* Prepare promo.
+
+### Todos before v5.0 (2025)
+* Compiler.nvim: test windows support.
+* Compiler.nvim: add support for justfiles and taskfiles.
+* Makeit.nvim: Add support for justfiles and taskfiles.
+* Makeit.nvim: Remove orchestrators. This only make sense for compiler.nvim.
+* Compiler.nvim: test support for nim-lang.
+* Compiler.nvim: add support for new language `common LISP`.
+* Compiler.nvim: add support for new language `COBOL`.
+* Version v2 of the website should look considerably better.
+
+### Blocked
 * Once selene add [this](https://github.com/Kampfkarren/selene/issues/224) and [this](https://github.com/Kampfkarren/selene/issues/524) and [this](https://github.com/Kampfkarren/selene/pull/591), let's add the new rules.
-* During 2024, create a landing page. Pretty much it's gonna be the same thing we have on the wiki, but with sparkles.

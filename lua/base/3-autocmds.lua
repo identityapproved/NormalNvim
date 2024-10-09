@@ -160,7 +160,7 @@ if is_available "alpha-nvim" then
   })
 end
 
--- 4. Update neotree when closin the git client.
+-- 4. Update neotree when closing the git client.
 if is_available "neo-tree.nvim" then
   autocmd("TermClose", {
     pattern = { "*lazygit", "*gitui" },
@@ -192,7 +192,7 @@ autocmd("BufWritePre", {
 
     if buf_is_valid_and_listed then
       vim.fn.mkdir(vim.fn.fnamemodify(
-        vim.loop.fs_realpath(args.match) or args.match, ":p:h"), "p")
+        vim.uv.fs_realpath(args.match) or args.match, ":p:h"), "p")
     end
   end,
 })
@@ -243,10 +243,10 @@ autocmd("BufWritePre", {
 
 -- Customize this command to work as you like
 cmd("TestNodejs", function()
-  vim.cmd ":ProjectRoot"                 -- cd the project root (requires project.nvim)
-  vim.cmd ":TermExec cmd='npm run test'" -- convention to run tests on nodejs
-  -- You can generate code coverage by add this to your project's packages.json
+  -- You can generate code coverage by adding this to your project's packages.json
   -- "tests": "jest --coverage"
+  vim.cmd(":ProjectRoot")                 -- cd the project root (requires project.nvim)
+  vim.cmd(":TermExec cmd='npm run test'") -- convention to run tests on nodejs
 end, { desc = "Run all unit tests for the current nodejs project" })
 
 -- Customize this command to work as you like

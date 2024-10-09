@@ -11,7 +11,6 @@
 --       -> heirline                    [ui components]
 --       -> telescope                   [search]
 --       -> telescope-fzf-native.nvim   [search backend]
---       -> smart-splits                [window-dimming]
 --       -> dressing.nvim               [better ui elements]
 --       -> noice.nvim                  [better cmd/search line]
 --       -> nvim-web-devicons           [icons | ui]
@@ -27,8 +26,8 @@ local is_android = vim.fn.isdirectory('/data') == 1 -- true if on android
 
 return {
 
-  -- tokyonight [theme]
-  -- https://github.com/folke/tokyonight.nvim
+  --  tokyonight [theme]
+  --  https://github.com/folke/tokyonight.nvim
   {
     "folke/tokyonight.nvim",
     event = "User LoadColorSchemes",
@@ -173,28 +172,35 @@ return {
         }
       end
 
+
+      local get_icon = require("base.utils").get_icon
+
       dashboard.section.header.opts.hl = "DashboardHeader"
-      vim.cmd "highlight DashboardHeader guifg=#F7778F"
+      vim.cmd("highlight DashboardHeader guifg=#F7778F")
 
       -- If yazi is not installed, don't show the button.
       local is_yazi_installed = vim.fn.executable("ya") == 1
-      local yazi_button = dashboard.button("r", "🦆 Yazi  ", "<cmd>Yazi<CR>")
+      local yazi_button = dashboard.button("r", get_icon("GreeterYazi") .. " Yazi", "<cmd>Yazi<CR>")
       if not is_yazi_installed then yazi_button = nil end
 
       -- Buttons
       dashboard.section.buttons.val = {
-        dashboard.button("n", "📄 New     ", "<cmd>ene<CR>"),
-        dashboard.button("e", "🌺 Recent  ", "<cmd>Telescope oldfiles<CR>"),
+        dashboard.button("n",
+          get_icon("GreeterNew") .. " New",
+          "<cmd>ene<CR>"),
+        dashboard.button("e",
+          get_icon("GreeterRecent") .. " Recent  ",
+          "<cmd>Telescope oldfiles<CR>"),
         yazi_button,
-        dashboard.button(
-          "s",
-          "🔎 Sessions",
+        dashboard.button("s",
+          get_icon("GreeterSessions") .. " Sessions",
           "<cmd>SessionManager! load_session<CR>"
         ),
-        dashboard.button("p", "💼 Projects", "<cmd>Telescope projects<CR>"),
+        dashboard.button("p",
+          get_icon("GreeterProjects") .. " Projects",
+          "<cmd>Telescope projects<CR>"),
         dashboard.button("", ""),
         dashboard.button("q", "   Quit", "<cmd>exit<CR>"),
-        --  --button("LDR f '", "  Bookmarks  "),
       }
 
       -- Vertical margins
@@ -319,9 +325,21 @@ return {
   -- Collection of components to use on your heirline config.
   {
     "zeioth/heirline-components.nvim",
-    opts = {
-      icons = require("base.icons.nerd_font")
-    }
+    opts = function()
+      -- return different items depending of the value of `vim.g.fallback_icons_enabled`
+      local function get_icons()
+        if vim.g.fallback_icons_enabled then
+          return require("base.icons.fallback_icons_enabled")
+        else
+          return require("base.icons.icons")
+        end
+      end
+
+      -- opts
+      return {
+        icons = get_icons(),
+      }
+    end
   },
 
   --  heirline [ui components]
@@ -334,7 +352,7 @@ return {
     dependencies = { "zeioth/heirline-components.nvim" },
     event = "User BaseDefered",
     opts = function()
-      local lib = require "heirline-components.all"
+      local lib = require("heirline-components.all")
       return {
         opts = {
           disable_winbar_cb = function(args) -- We do this to avoid showing it on the greeter.
@@ -435,7 +453,7 @@ return {
       },
       {
         "nvim-telescope/telescope-fzf-native.nvim",
-        enabled = vim.fn.executable "make" == 1,
+        enabled = vim.fn.executable("make") == 1,
         build = "make",
       },
     },
@@ -454,9 +472,9 @@ return {
       }
       return {
         defaults = {
-          prompt_prefix = get_icon("Selected", 1),
-          selection_caret = get_icon("Selected", 1),
-          multi_icon = get_icon("selected", 1),
+          prompt_prefix = get_icon("PromptPrefix") .. " ",
+          selection_caret = get_icon("PromptPrefix") .. " ",
+          multi_icon = get_icon("PromptPrefix") .. " ",
           path_display = { "truncate" },
           sorting_strategy = "ascending",
           layout_config = {
@@ -477,7 +495,7 @@ return {
           undo = {
             use_delta = true,
             side_by_side = true,
-            diff_context_lines = 0,
+            vim_diff_opts = { ctxlen = 0 },
             entry_format = "󰣜 #$ID, $STAT, $TIME",
             layout_strategy = "horizontal",
             layout_config = {
@@ -569,7 +587,7 @@ return {
   --  https://github.com/nvim-tree/nvim-web-devicons
   {
     "nvim-tree/nvim-web-devicons",
-    enabled = vim.g.icons_enabled,
+    enabled = not vim.g.fallback_icons_enabled,
     event = "User BaseDefered",
     opts = {
       override = {
@@ -600,6 +618,7 @@ return {
   --  https://github.com/onsails/lspkind.nvim
   {
     "onsails/lspkind.nvim",
+    enabled = not vim.g.fallback_icons_enabled,
     opts = {
       mode = "symbol",
       symbol_map = {
@@ -622,7 +641,6 @@ return {
       },
       menu = {},
     },
-    enabled = vim.g.icons_enabled,
     config = function(_, opts)
       require("lspkind").init(opts)
     end,
@@ -729,7 +747,7 @@ return {
     opts = {
       preset = "classic", -- "classic", "modern", or "helix"
       icons = {
-        group = vim.g.icons_enabled ~= false and "" or "+",
+        group = (vim.g.fallback_icons_enabled and "+") or "",
         rules = false,
         separator = "-",
       },
