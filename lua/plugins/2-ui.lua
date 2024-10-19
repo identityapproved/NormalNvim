@@ -3,6 +3,7 @@
 
 --    Sections:
 --       -> tokyonight                  [theme]
+--       -> dracula                     [theme]
 --       -> astrotheme                  [theme]
 --       -> alpha-nvim                  [greeter]
 --       -> nvim-notify                 [notifications]
@@ -21,60 +22,77 @@
 --       -> which-key                   [on-screen keybinding]
 
 local utils = require("base.utils")
-local is_windows = vim.fn.has('win32') == 1         -- true if on windows
-local is_android = vim.fn.isdirectory('/data') == 1 -- true if on android
+local is_windows = vim.fn.has("win32") == 1         -- true if on windows
+local is_android = vim.fn.isdirectory("/data") == 1 -- true if on android
 
 return {
 
   --  tokyonight [theme]
   --  https://github.com/folke/tokyonight.nvim
-  {
-    "folke/tokyonight.nvim",
-    event = "User LoadColorSchemes",
-    opts = {
-      -- Background styles. Can be "dark", "transparent" or "normal"
-      dim_inactive = false,
-      lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
-      terminal_colors = true,
-      cache = true,
-      styles = {
-        comments = { italic = true },
-        keywords = { italic = true },
-        sidebars = "transparent", -- style for sidebars, see below
-        floats = "transparent", -- style for floating windows
-      },
-      --- You can override specific color groups to use other groups or a hex color
-      --- function will be called with a ColorScheme table
-      ---@param colors ColorScheme
-      on_colors = function(colors)
-      colors.bg_statusline = "NONE"
-      end,
-
-      ---@type table<string, boolean|{enabled:boolean}>
-      plugins = {
-        -- enable all plugins when not using lazy.nvim
-        -- set to false to manually enable/disable plugins
-        all = package.loaded.lazy == nil,
-        -- uses your plugin manager to automatically enable needed plugins
-        -- currently only lazy.nvim is supported
-        auto = true,
-        -- add any plugins here that you want to enable
-        -- for all possible plugins, see:
-        --   * https://github.com/folke/tokyonight.nvim/tree/main/lua/tokyonight/groups
-        telescope = true,
-    },
-    }
-  },
+  -- {
+  --   "folke/tokyonight.nvim",
+  --   event = "User LoadColorSchemes",
+  --   opts = {
+  --     -- Background styles. Can be "dark", "transparent" or "normal"
+  --     dim_inactive = false,
+  --     lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+  --     terminal_colors = true,
+  --     cache = true,
+  --     styles = {
+  --       comments = { italic = true },
+  --       keywords = { italic = true },
+  --       sidebars = "transparent", -- style for sidebars, see below
+  --       floats = "transparent", -- style for floating windows
+  --     },
+  --     --- You can override specific color groups to use other groups or a hex color
+  --     --- function will be called with a ColorScheme table
+  --     ---@param colors ColorScheme
+  --     on_colors = function(colors)
+  --     colors.bg_statusline = "NONE"
+  --     end,
+  --
+  --     ---@type table<string, boolean|{enabled:boolean}>
+  --     plugins = {
+  --       -- enable all plugins when not using lazy.nvim
+  --       -- set to false to manually enable/disable plugins
+  --       all = package.loaded.lazy == nil,
+  --       -- uses your plugin manager to automatically enable needed plugins
+  --       -- currently only lazy.nvim is supported
+  --       auto = true,
+  --       -- add any plugins here that you want to enable
+  --       -- for all possible plugins, see:
+  --       --   * https://github.com/folke/tokyonight.nvim/tree/main/lua/tokyonight/groups
+  --       telescope = true,
+  --   },
+  --   }
+  -- },
 
   --  astrotheme [theme]
   --  https://github.com/AstroNvim/astrotheme
+  -- {
+  --   "AstroNvim/astrotheme",
+  --   event = "User LoadColorSchemes",
+  --   opts = {
+  --     palette = "astrodark",
+  --     plugins = { ["dashboard-nvim"] = true },
+  --   },
+  -- },
+
   {
-    "AstroNvim/astrotheme",
+    "Mofiqul/dracula.nvim",
+    lazy = false,
     event = "User LoadColorSchemes",
     opts = {
-      palette = "astrodark",
-      plugins = { ["dashboard-nvim"] = true },
+      -- use transparent background
+      transparent_bg = true,        -- default false
+      -- set custom lualine background color
+      lualine_bg_color = "#44475a", -- default nil
+      -- set italic comment
+      italic_comment = true,        -- default false priority = 999,
     },
+    config = function()
+      vim.cmd([[colorscheme dracula]])
+    end,
   },
 
   --  alpha-nvim [greeter]
@@ -172,7 +190,6 @@ return {
         }
       end
 
-
       local get_icon = require("base.utils").get_icon
 
       dashboard.section.header.opts.hl = "DashboardHeader"
@@ -180,34 +197,45 @@ return {
 
       -- If yazi is not installed, don't show the button.
       local is_yazi_installed = vim.fn.executable("ya") == 1
-      local yazi_button = dashboard.button("r", get_icon("GreeterYazi") .. " Yazi", "<cmd>Yazi<CR>")
+      local yazi_button = dashboard.button(
+        "r",
+        get_icon("GreeterYazi") .. " Yazi",
+        "<cmd>Yazi<CR>"
+      )
       if not is_yazi_installed then yazi_button = nil end
 
       -- Buttons
       dashboard.section.buttons.val = {
-        dashboard.button("n",
+        dashboard.button(
+          "n",
           get_icon("GreeterNew") .. " New",
-          "<cmd>ene<CR>"),
-        dashboard.button("e",
+          "<cmd>ene<CR>"
+        ),
+        dashboard.button(
+          "e",
           get_icon("GreeterRecent") .. " Recent  ",
-          "<cmd>Telescope oldfiles<CR>"),
+          "<cmd>Telescope oldfiles<CR>"
+        ),
         yazi_button,
-        dashboard.button("s",
+        dashboard.button(
+          "s",
           get_icon("GreeterSessions") .. " Sessions",
           "<cmd>SessionManager! load_session<CR>"
         ),
-        dashboard.button("p",
+        dashboard.button(
+          "p",
           get_icon("GreeterProjects") .. " Projects",
-          "<cmd>Telescope projects<CR>"),
+          "<cmd>Telescope projects<CR>"
+        ),
         dashboard.button("", ""),
         dashboard.button("q", "   Quit", "<cmd>exit<CR>"),
       }
 
       -- Vertical margins
       dashboard.config.layout[1].val =
-          vim.fn.max { 2, vim.fn.floor(vim.fn.winheight(0) * 0.10) } -- Above header
+          vim.fn.max({ 2, vim.fn.floor(vim.fn.winheight(0) * 0.10) }) -- Above header
       dashboard.config.layout[3].val =
-          vim.fn.max { 2, vim.fn.floor(vim.fn.winheight(0) * 0.10) } -- Above buttons
+          vim.fn.max({ 2, vim.fn.floor(vim.fn.winheight(0) * 0.10) }) -- Above buttons
 
       -- Disable autocmd and return
       dashboard.config.opts.noautocmd = true
@@ -232,7 +260,7 @@ return {
             ".............................",
           }
           opts.section.footer.opts.hl = "DashboardFooter"
-          vim.cmd "highlight DashboardFooter guifg=#D29B68"
+          vim.cmd("highlight DashboardFooter guifg=#D29B68")
           pcall(vim.cmd.AlphaRedraw)
         end,
       })
@@ -246,7 +274,11 @@ return {
     event = "User BaseDefered",
     opts = function()
       local fps
-      if is_android then fps = 30 else fps = 144 end
+      if is_android then
+        fps = 30
+      else
+        fps = 144
+      end
 
       return {
         timeout = 2500,
@@ -310,14 +342,14 @@ return {
             "toggleterm",
             "Trouble",
             "calltree",
-            "coverage"
+            "coverage",
           }
           if vim.tbl_contains(ignored_filetypes, vim.bo.filetype) then
             vim.b.miniindentscope_disable = true
           end
         end,
       })
-    end
+    end,
   },
 
   -- heirline-components.nvim [ui components]
@@ -339,7 +371,7 @@ return {
       return {
         icons = get_icons(),
       }
-    end
+    end,
   },
 
   --  heirline [ui components]
@@ -356,27 +388,28 @@ return {
       return {
         opts = {
           disable_winbar_cb = function(args) -- We do this to avoid showing it on the greeter.
-            local is_disabled = not require("heirline-components.buffer").is_valid(args.buf) or
-                lib.condition.buffer_matches({
-                  buftype = { "terminal", "prompt", "nofile", "help", "quickfix" },
-                  filetype = {
-                    "NvimTree",
-                    "neo%-tree",
-                    "dashboard",
-                    "Outline",
-                    "aerial",
-                    "rnvimr",
-                    "yazi"
-                  },
-                }, args.buf)
+            local is_disabled = not require("heirline-components.buffer").is_valid(
+              args.buf
+            ) or lib.condition.buffer_matches({
+              buftype = { "terminal", "prompt", "nofile", "help", "quickfix" },
+              filetype = {
+                "NvimTree",
+                "neo%-tree",
+                "dashboard",
+                "Outline",
+                "aerial",
+                "rnvimr",
+                "yazi",
+              },
+            }, args.buf)
             return is_disabled
           end,
         },
         tabline = { -- UI upper bar
           lib.component.tabline_conditional_padding(),
           lib.component.tabline_buffers(),
-          lib.component.fill { hl = { bg = "tabline_bg" } },
-          lib.component.tabline_tabpages()
+          lib.component.fill({ hl = { bg = "tabline_bg" } }),
+          lib.component.tabline_tabpages(),
         },
         winbar = { -- UI breadcrumbs bar
           init = function(self) self.bufnr = vim.api.nvim_get_current_buf() end,
@@ -401,7 +434,7 @@ return {
             lib.component.fill(),
             lib.component.compiler_redo(),
             lib.component.aerial(),
-          }
+          },
         },
         statuscolumn = { -- UI left column
           init = function(self) self.bufnr = vim.api.nvim_get_current_buf() end,
@@ -423,13 +456,13 @@ return {
           lib.component.compiler_state(),
           lib.component.virtual_env(),
           lib.component.nav(),
-          lib.component.mode { surround = { separator = "right" } },
+          lib.component.mode({ surround = { separator = "right" } }),
         },
       }
     end,
     config = function(_, opts)
       local heirline = require("heirline")
-      local heirline_components = require "heirline-components.all"
+      local heirline_components = require("heirline-components.all")
 
       -- Setup
       heirline_components.init.subscribe_to_events()
@@ -517,12 +550,24 @@ return {
       telescope.setup(opts)
       -- Here we define the Telescope extension for all plugins.
       -- If you delete a plugin, you can also delete its Telescope extension.
-      if utils.is_available("nvim-notify") then telescope.load_extension("notify") end
-      if utils.is_available("telescope-fzf-native.nvim") then telescope.load_extension("fzf") end
-      if utils.is_available("telescope-undo.nvim") then telescope.load_extension("undo") end
-      if utils.is_available("project.nvim") then telescope.load_extension("projects") end
-      if utils.is_available("LuaSnip") then telescope.load_extension("luasnip") end
-      if utils.is_available("aerial.nvim") then telescope.load_extension("aerial") end
+      if utils.is_available("nvim-notify") then
+        telescope.load_extension("notify")
+      end
+      if utils.is_available("telescope-fzf-native.nvim") then
+        telescope.load_extension("fzf")
+      end
+      if utils.is_available("telescope-undo.nvim") then
+        telescope.load_extension("undo")
+      end
+      if utils.is_available("project.nvim") then
+        telescope.load_extension("projects")
+      end
+      if utils.is_available("LuaSnip") then
+        telescope.load_extension("luasnip")
+      end
+      if utils.is_available("aerial.nvim") then
+        telescope.load_extension("aerial")
+      end
       if utils.is_available("nvim-neoclip.lua") then
         telescope.load_extension("neoclip")
         telescope.load_extension("macroscope")
@@ -538,7 +583,7 @@ return {
     opts = {
       input = { default_prompt = "➤ " },
       select = { backend = { "telescope", "builtin" } },
-    }
+    },
   },
 
   --  Noice.nvim [better cmd/search line]
@@ -567,7 +612,7 @@ return {
             lua = { conceal = enable_conceal },
             help = { conceal = enable_conceal },
             input = { conceal = enable_conceal },
-          }
+          },
         },
 
         -- Disable every other noice feature
@@ -580,7 +625,7 @@ return {
           smart_move = { enabled = false },
         },
       }
-    end
+    end,
   },
 
   --  UI icons [icons]
@@ -593,7 +638,7 @@ return {
       override = {
         default_icon = {
           icon = require("base.utils").get_icon("DefaultFile"),
-          name = "default"
+          name = "default",
         },
         deb = { icon = "", name = "Deb" },
         lock = { icon = "󰌾", name = "Lock" },
@@ -609,9 +654,7 @@ return {
         zip = { icon = "", name = "Zip" },
       },
     },
-    config = function(_, opts)
-      require("nvim-web-devicons").setup(opts)
-    end
+    config = function(_, opts) require("nvim-web-devicons").setup(opts) end,
   },
 
   --  LSP icons [icons]
@@ -641,9 +684,7 @@ return {
       },
       menu = {},
     },
-    config = function(_, opts)
-      require("lspkind").init(opts)
-    end,
+    config = function(_, opts) require("lspkind").init(opts) end,
   },
 
   --  nvim-scrollbar [scrollbar]
@@ -679,7 +720,7 @@ return {
     opts = function()
       -- don't use animate when scrolling with the mouse
       local mouse_scrolled = false
-      for _, scroll in ipairs { "Up", "Down" } do
+      for _, scroll in ipairs({ "Up", "Down" }) do
         local key = "<ScrollWheel" .. scroll .. ">"
         vim.keymap.set({ "", "i" }, key, function()
           mouse_scrolled = true
@@ -691,11 +732,11 @@ return {
       return {
         open = { enable = false }, -- true causes issues on nvim-spectre
         resize = {
-          timing = animate.gen_timing.linear { duration = 33, unit = "total" },
+          timing = animate.gen_timing.linear({ duration = 33, unit = "total" }),
         },
         scroll = {
-          timing = animate.gen_timing.linear { duration = 50, unit = "total" },
-          subscroll = animate.gen_subscroll.equal {
+          timing = animate.gen_timing.linear({ duration = 50, unit = "total" }),
+          subscroll = animate.gen_subscroll.equal({
             predicate = function(total_scroll)
               if mouse_scrolled then
                 mouse_scrolled = false
@@ -703,11 +744,11 @@ return {
               end
               return total_scroll > 1
             end,
-          },
+          }),
         },
         cursor = {
           enable = false, -- We don't want cursor ghosting
-          timing = animate.gen_timing.linear { duration = 26, unit = "total" },
+          timing = animate.gen_timing.linear({ duration = 26, unit = "total" }),
         },
       }
     end,
@@ -722,8 +763,8 @@ return {
     event = "User BaseDefered",
     opts = {
       duration = 150,
-      undo = { hlgroup = 'IncSearch' },
-      redo = { hlgroup = 'IncSearch' },
+      undo = { hlgroup = "IncSearch" },
+      redo = { hlgroup = "IncSearch" },
     },
     config = function(_, opts)
       require("highlight-undo").setup(opts)
@@ -757,6 +798,4 @@ return {
       require("base.utils").which_key_register()
     end,
   },
-
-
 } -- end of return
